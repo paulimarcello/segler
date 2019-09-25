@@ -21,33 +21,21 @@ defmodule Merkmal do
     splitte_merkmal(left, right)
   end
 
-  defp splitte_merkmal(
-         %MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt},
-         %MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}
-       ),
-       do: [%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}]
+  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}, %MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}),
+    do: [%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}]
 
-  defp splitte_merkmal(
-         %MerkmalLogisch{id: id, ist_erfuellt: nil},
-         %MerkmalLogisch{id: id, ist_erfuellt: _}
-       ),
-       do: beide_logische_auspraegungen(id)
+  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: nil}, %MerkmalLogisch{id: id, ist_erfuellt: _}),
+    do: beide_logische_auspraegungen(id)
 
-  defp splitte_merkmal(
-         %MerkmalLogisch{id: id, ist_erfuellt: _},
-         %MerkmalLogisch{id: id, ist_erfuellt: nil}
-       ),
-       do: beide_logische_auspraegungen(id)
+  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: _}, %MerkmalLogisch{id: id, ist_erfuellt: nil}),
+    do: beide_logische_auspraegungen(id)
 
-  defp splitte_merkmal(
-         %MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt},
-         %MerkmalLogisch{id: id, ist_erfuellt: _}
-       ),
-       do: [%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}]
+  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}, %MerkmalLogisch{id: id, ist_erfuellt: _}),
+    do: [%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}]
+
+  defp splitte_merkmal(%{id: l_id}, %{id: r_id}),
+    do: {:error, "Merkmale haben unterschiedliche Ids. Left #{l_id}, right #{r_id}"}
 
   defp beide_logische_auspraegungen(id),
-    do: [
-      %MerkmalLogisch{id: id, ist_erfuellt: true},
-      %MerkmalLogisch{id: id, ist_erfuellt: false}
-    ]
+    do: [%MerkmalLogisch{id: id, ist_erfuellt: true}, %MerkmalLogisch{id: id, ist_erfuellt: false}]
 end
