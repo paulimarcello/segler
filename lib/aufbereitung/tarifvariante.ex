@@ -1,0 +1,2 @@
+defmodule Tarifvariante do
+end

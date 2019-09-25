@@ -10,6 +10,7 @@ defmodule MerkmalLogisch do
   def new(id) do
     %MerkmalLogisch{id: id, ist_erfuellt: nil}
   end
+
   def splitte(left, right) do
     cond do
       left == right -> [left]
