@@ -22,3 +22,8 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 tarifaufbereitung-*.tar
 
+# keine Ahnung
+.elixir_ls
+.elixir_ls/
+/.elixir_ls/**
+/.elixir_ls/*

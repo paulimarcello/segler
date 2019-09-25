@@ -4,10 +4,6 @@ defmodule Merkmal do
       ueberschneidet_merkmal(left, right)
   end
 
-  def splitte(left, right) do
-    splitte_merkmal(left, right)
-  end
-
   defp gleiche_id(left, right) do
     left.id == right.id
   end
@@ -21,10 +17,35 @@ defmodule Merkmal do
       l_bool === r_bool
   end
 
-  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: true}, _),
-    do: [%MerkmalLogisch{id: id, ist_erfuellt: true}]
+  def splitte(left, right) do
+    splitte_merkmal(left, right)
+  end
 
-  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: nil}, _),
+  defp splitte_merkmal(
+         %MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt},
+         %MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}
+       ),
+       do: [%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}]
+
+  defp splitte_merkmal(
+         %MerkmalLogisch{id: id, ist_erfuellt: nil},
+         %MerkmalLogisch{id: id, ist_erfuellt: _}
+       ),
+       do: beide_logische_auspraegungen(id)
+
+  defp splitte_merkmal(
+         %MerkmalLogisch{id: id, ist_erfuellt: _},
+         %MerkmalLogisch{id: id, ist_erfuellt: nil}
+       ),
+       do: beide_logische_auspraegungen(id)
+
+  defp splitte_merkmal(
+         %MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt},
+         %MerkmalLogisch{id: id, ist_erfuellt: _}
+       ),
+       do: [%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}]
+
+  defp beide_logische_auspraegungen(id),
     do: [
       %MerkmalLogisch{id: id, ist_erfuellt: true},
       %MerkmalLogisch{id: id, ist_erfuellt: false}
