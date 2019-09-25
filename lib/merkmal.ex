@@ -14,19 +14,7 @@ defmodule Merkmal do
 
   def splitte(left, right) do
     case {left, right} do
-      {%MerkmalLogisch{}, %MerkmalLogisch{}} -> splitte_logisch(left, right)
+      {%MerkmalLogisch{}, %MerkmalLogisch{}} -> MerkmalLogisch.splitte(left, right)
     end
   end
-
-  defp splitte_logisch(left, right) do
-    cond do
-      left == right -> [left]
-      left.ist_erfuellt == nil -> beide_logische_auspraegungen(left.id)
-      right.ist_erfuellt == nil -> beide_logische_auspraegungen(right.id)
-      left.ist_erfuellt -> [left]
-    end
-  end
-
-  defp beide_logische_auspraegungen(id),
-    do: [%MerkmalLogisch{id: id, ist_erfuellt: true}, %MerkmalLogisch{id: id, ist_erfuellt: false}]
 end
