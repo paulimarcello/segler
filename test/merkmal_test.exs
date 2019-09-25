@@ -30,15 +30,6 @@ defmodule MerkmalLogischTest do
     assert Merkmal.ueberschneidet(left, right) === true
   end
 
-  test "splitte - unterschiedliche Ids -> error" do
-    left = MerkmalId.new(1) |> MerkmalLogisch.new(true)
-    right = MerkmalId.new(2) |> MerkmalLogisch.new(true)
-
-    result = Merkmal.splitte(left, right)
-
-    assert result == {:error, "Merkmale haben unterschiedliche Ids. Left 1, right 2"}
-  end
-
   test "splitte - gleiche ids und beide true -> ein gleiches merkmal" do
     left = MerkmalId.new(1) |> MerkmalLogisch.new(true)
     right = MerkmalId.new(1) |> MerkmalLogisch.new(true)

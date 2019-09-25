@@ -13,23 +13,19 @@ defmodule Merkmal do
   end
 
   def splitte(left, right) do
-    splitte_merkmal(left, right)
+    case {left, right} do
+      {%MerkmalLogisch{}, %MerkmalLogisch{}} -> splitte_logisch(left, right)
+    end
   end
 
-  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}, %MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}),
-    do: [%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}]
-
-  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: nil}, %MerkmalLogisch{id: id, ist_erfuellt: _}),
-    do: beide_logische_auspraegungen(id)
-
-  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: _}, %MerkmalLogisch{id: id, ist_erfuellt: nil}),
-    do: beide_logische_auspraegungen(id)
-
-  defp splitte_merkmal(%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}, %MerkmalLogisch{id: id, ist_erfuellt: _}),
-    do: [%MerkmalLogisch{id: id, ist_erfuellt: ist_erfuellt}]
-
-  defp splitte_merkmal(%{id: l_id}, %{id: r_id}),
-    do: {:error, "Merkmale haben unterschiedliche Ids. Left #{l_id}, right #{r_id}"}
+  defp splitte_logisch(left, right) do
+    cond do
+      left == right -> [left]
+      left.ist_erfuellt == nil -> beide_logische_auspraegungen(left.id)
+      right.ist_erfuellt == nil -> beide_logische_auspraegungen(right.id)
+      left.ist_erfuellt -> [left]
+    end
+  end
 
   defp beide_logische_auspraegungen(id),
     do: [%MerkmalLogisch{id: id, ist_erfuellt: true}, %MerkmalLogisch{id: id, ist_erfuellt: false}]
