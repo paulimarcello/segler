@@ -10,8 +10,12 @@ defmodule Tarifwerk do
     %Tarifwerk{}
   end
 
+  defp new(id, name) do
+    %Tarifwerk{id: id, name: name}
+  end
+
   def from_history(events) do
-    tarifwerk = Enum.reduce(events, new(), &apply_event(&2, &1, false))
+    tarifwerk = Enum.reduce(events, new(), &apply_event({&2, &1.payload}, false))
     %Tarifwerk{tarifwerk | history_stream: events}
   end
 
@@ -19,7 +23,7 @@ defmodule Tarifwerk do
     tarifwerk.new_events
   end
 
-  defp apply_event(tarifwerk, event, is_new? \\ true) do
+  defp apply_event({tarifwerk, event}, is_new? \\ true) do
     tarifwerk_id = tarifwerk.id
 
     tarifwerk =
@@ -50,31 +54,30 @@ defmodule Tarifwerk do
   end
 
   def lege_neues_tarifwerk_an(%{tarifwerk_id: id, name: name}) do
-    apply_event(
-      new(),
-      {:tarifwerk_angelegt, %{tarifwerk_id: id, name: name}}
-    )
+    new(id, name)
+    |> create_event({:tarifwerk_angelegt, %{tarifwerk_id: id, name: name}})
+    |> apply_event
   end
 
   def lege_neuen_tarif_an(tarifwerk, %{tarif_id: tarif_id, name: tarif_name}) do
-    apply_event(
-      tarifwerk,
-      {:tarif_angelegt, %{tarifwerk_id: tarifwerk.id, tarif_id: tarif_id, tarif_name: tarif_name}}
-    )
+    tarifwerk
+    |> create_event({:tarif_angelegt, %{tarifwerk_id: tarifwerk.id, tarif_id: tarif_id, tarif_name: tarif_name}})
+    |> apply_event
   end
 
   def lege_neuen_tarifwerkszuschlag_an(tarifwerk, %{zuschlag_id: zuschlag_id, formel: formel, reihenfolge: reihenfolge}) do
-    apply_event(
-      tarifwerk,
-      {:tarifwerkszuschlag_angelegt, %{tarifwerk_id: tarifwerk.id, zuschlag_id: zuschlag_id, formel: formel, reihenfolge: reihenfolge}}
-    )
+    tarifwerk
+    |> create_event({:tarifwerkszuschlag_angelegt, %{tarifwerk_id: tarifwerk.id, zuschlag_id: zuschlag_id, formel: formel, reihenfolge: reihenfolge}})
+    |> apply_event
   end
 
   def lege_neuen_tarifzuschlag_an(tarifwerk, %{tarif_id: tarif_id, zuschlag_id: zuschlag_id, formel: formel, reihenfolge: reihenfolge}) do
-    apply_event(
-      tarifwerk,
-      {:tarifzuschlag_angelegt,
-       %{tarifwerk_id: tarifwerk.id, tarif_id: tarif_id, zuschlag_id: zuschlag_id, formel: formel, reihenfolge: reihenfolge}}
-    )
+    tarifwerk
+    |> create_event( {:tarifzuschlag_angelegt, %{tarifwerk_id: tarifwerk.id, tarif_id: tarif_id, zuschlag_id: zuschlag_id, formel: formel, reihenfolge: reihenfolge}} )
+    |> apply_event
+  end
+
+  defp create_event(tarifwerk, payload) do
+    { tarifwerk, Event.new(tarifwerk.id, payload) }
   end
 end
