@@ -41,5 +41,4 @@ defmodule Aufbereitung.Services.TarifAufbereitungService do
   defp uebernimm_versicherungssteuer(tarifvarianten, _versicherungssteuer) do
     tarifvarianten
   end
-
 end

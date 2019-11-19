@@ -1,5 +1,4 @@
 defmodule Aufbereitung.Model.Tarifvariante do
-
   alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
   alias Aufbereitung.Model.TarifvariantenbausteinId, as: TarifvariantenbausteinId
   alias Aufbereitung.Model.Merkmal, as: Merkmal
