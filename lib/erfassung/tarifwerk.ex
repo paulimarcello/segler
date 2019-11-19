@@ -19,7 +19,7 @@ defmodule Tarifwerk do
     %Tarifwerk{tarifwerk | history_stream: events}
   end
 
-  def get_new_events(tarifwerk) do
+  def get_new_events(tarifwerk = %Tarifwerk{}) do
     tarifwerk.new_events
   end
 
@@ -78,6 +78,6 @@ defmodule Tarifwerk do
   end
 
   defp create_event(tarifwerk, type, payload) do
-    { tarifwerk, Event.new(type, payload) }
+    {tarifwerk, Event.new(type, payload)}
   end
 end
