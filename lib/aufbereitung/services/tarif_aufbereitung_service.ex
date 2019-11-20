@@ -4,19 +4,19 @@ defmodule Aufbereitung.Services.TarifAufbereitungService do
   alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
   alias Aufbereitung.Model.Zuschlag, as: Zuschlag
 
-  def alle_tarifvarianten_des_tarifs(tarif = %Tarif{}) do
-    tarif.grundpraemien
-    |> Enum.map(&bilde_grundtarifvarianten(tarif.id, &1))
-    |> erweitere_um_leistungsumfang(tarif.leistungsumfang)
-    |> wende_tarifzuschlaege_an(tarif.zuschlaege)
-    |> wende_leistungstexte_an(tarif.leistungstexte)
-    |> uebernimm_tarifbereiche(tarif.tarifbereiche)
-    |> uebernimm_versicherungssteuer(tarif.versicherungssteuer)
-  end
+  #  def alle_tarifvarianten_des_tarifs(tarif = %Tarif{}) do
+  #    tarif.grundpraemien
+  #    |> Enum.map(&bilde_grundtarifvarianten(tarif.id, &1))
+  #    |> erweitere_um_leistungsumfang(tarif.leistungsumfang)
+  #    |> wende_tarifzuschlaege_an(tarif.zuschlaege)
+  #    |> wende_leistungstexte_an(tarif.leistungstexte)
+  #    |> uebernimm_tarifbereiche(tarif.tarifbereiche)
+  #    |> uebernimm_versicherungssteuer(tarif.versicherungssteuer)
+  #  end
 
-  defp bilde_grundtarifvarianten(tarif_id, praemie) do
-    Tarifvariante.new(tarif_id, praemie.id, Grundpraemie.get_leistungsumfang_aus_bedingung(praemie))
-  end
+  #  defp bilde_grundtarifvarianten(tarif_id, praemie) do
+  #    Tarifvariante.new(tarif_id, praemie.id, Grundpraemie.get_leistungsumfang_aus_bedingung(praemie))
+  #  end
 
   defp erweitere_um_leistungsumfang(tarifvarianten, leistungsumfang) do
     tarifvarianten

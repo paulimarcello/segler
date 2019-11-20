@@ -37,6 +37,13 @@ defmodule Aufbereitung.Model.Merkmal do
   end
 
   # --------------------------------------------------------------------------------------------------
+  # Gleichheit
+  # --------------------------------------------------------------------------------------------------
+  def bezieht_sich_auf?(left, right) do
+    left.id === right.id and left.typ === right.typ
+  end
+
+  # --------------------------------------------------------------------------------------------------
   # Aufbereitung
   # --------------------------------------------------------------------------------------------------
   @spec hinzufuegen_wenn_nicht_vorhanden([Aufbereitung.Model.Merkmal.t()], Aufbereitung.Model.Merkmal.t()) :: [
@@ -117,13 +124,15 @@ defmodule Aufbereitung.Model.Merkmal do
   # --------------------------------------------------------------------------------------------------
   # Split-Logik Auswahl und Selbstbeteiligung
   # --------------------------------------------------------------------------------------------------
-  def splitte(m1 = %Merkmal{id: id, typ: typ, data: left}, %Merkmal{id: id, typ: typ, data: right}) when typ === :auswahl
-                                                                                                      or typ === :sb do
+  def splitte(m1 = %Merkmal{id: id, typ: typ, data: left}, %Merkmal{id: id, typ: typ, data: right})
+      when typ === :auswahl or
+             typ === :sb do
     delta = MapSet.difference(left, right)
     intersection = MapSet.intersection(left, right)
 
     case MapSet.size(intersection) do
-      0 -> [m1]
+      0 ->
+        [m1]
 
       _ ->
         [

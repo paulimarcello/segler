@@ -4,6 +4,36 @@ defmodule MerkmalTest do
   use ExUnit.Parameterized
 
   # --------------------------------------------------------------------------------------------------
+  # Gleichheit
+  # --------------------------------------------------------------------------------------------------
+  test "gleicheit bei gleicher id und typ" do
+    m1 = Merkmal.new_logisch(1, :erfuellt)
+    m2 = Merkmal.new_logisch(1, :nicht_erfuellt)
+
+    result = Merkmal.bezieht_sich_auf?(m1, m2)
+
+    assert result === true
+  end
+
+  test "ungleicheit bei gleicher id und ungleichem typ" do
+    m1 = Merkmal.new_logisch(1, :erfuellt)
+    m2 = Merkmal.new_bereich(1, 1, 100)
+
+    result = Merkmal.bezieht_sich_auf?(m1, m2)
+
+    assert result === false
+  end
+
+  test "ungleicheit bei ungleicher id und gleichem typ" do
+    m1 = Merkmal.new_logisch(1, :erfuellt)
+    m2 = Merkmal.new_logisch(2, :erfuellt)
+
+    result = Merkmal.bezieht_sich_auf?(m1, m2)
+
+    assert result === false
+  end
+
+  # --------------------------------------------------------------------------------------------------
   # Split-Logik Logisch
   # --------------------------------------------------------------------------------------------------
   test_with_params "splitte logisch 1 - identisches Merkmal - kein split",
@@ -272,9 +302,9 @@ defmodule MerkmalTest do
     result = Merkmal.splitte(left, right)
 
     assert result === [
-      Merkmal.new_auswahl(1, [4, 5]),
-      Merkmal.new_auswahl(1, [1, 2, 3])
-    ]
+             Merkmal.new_auswahl(1, [4, 5]),
+             Merkmal.new_auswahl(1, [1, 2, 3])
+           ]
   end
 
   test "splitte auswahl 3" do
@@ -295,8 +325,6 @@ defmodule MerkmalTest do
     assert result === [left]
   end
 
-
-
   test "splitte selbstbeteiligung 1" do
     left = Merkmal.new_selbstbeteiligung(1, [1, 2, 3, 4, 5])
     right = Merkmal.new_selbstbeteiligung(1, [6])
@@ -313,9 +341,9 @@ defmodule MerkmalTest do
     result = Merkmal.splitte(left, right)
 
     assert result === [
-      Merkmal.new_selbstbeteiligung(1, [4, 5]),
-      Merkmal.new_selbstbeteiligung(1, [1, 2, 3])
-    ]
+             Merkmal.new_selbstbeteiligung(1, [4, 5]),
+             Merkmal.new_selbstbeteiligung(1, [1, 2, 3])
+           ]
   end
 
   test "splitte selbstbeteiligung 3" do
