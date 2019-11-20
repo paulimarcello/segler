@@ -17,19 +17,17 @@ defmodule Aufbereitung.Model.Tarifvariante do
   # --------------------------------------------------------------------------------------------------
   def splitte(tarifvariante = %Tarifvariante{}, split_merkmale) when is_list(split_merkmale), do:
     split_merkmale
-    |> Enum.reduce([tarifvariante], fn merkmal, acc -> splitte(acc, merkmal, []) end)
+    |> Enum.reduce([tarifvariante], &splitte(&2, &1, []))
     |> List.flatten()
 
   def splitte(tarifvariante = %Tarifvariante{}, split_merkmal = %Merkmal{}) do
     {[merkmal], _} =
       tarifvariante.leistungsumfang
-      |> Enum.split_with(fn m -> Merkmal.bezieht_sich_auf?(m, split_merkmal) end)
-
-    neuer_leistungsumfang = tarifvariante.leistungsumfang -- [merkmal]
+      |> Enum.split_with(&Merkmal.bezieht_sich_auf?(&1, split_merkmal))
 
     merkmal
     |> Merkmal.splitte(split_merkmal)
-    |> Enum.map(&%Tarifvariante{tarifvariante | leistungsumfang: [&1 | neuer_leistungsumfang]})
+    |> Enum.map(&%Tarifvariante{tarifvariante | leistungsumfang: [&1 | tarifvariante.leistungsumfang -- [merkmal]]})
   end
 
   defp splitte([], _, acc), do:
