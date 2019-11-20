@@ -18,10 +18,13 @@ defmodule Aufbereitung.Model.Zuschlag do
   end
 
   def anwenden(zuschlag, tarifvariante) do
-    split_merkmale = Bedingung.get_merkmale(zuschlag)
-
-    neue_tarifvarianten = Tarifvariante.splitte(tarifvariante, split_merkmale)
-
-    nil
+    Tarifvariante.splitte(tarifvariante, Bedingung.get_merkmale(zuschlag))
+    |> Enum.map(fn variante ->
+                  lu = Tarifvariante.get_leistungsumfang(tarifvariante)
+                  case Bedingung.erfuellt_durch(zuschlag.bedingung, lu) do
+                    false -> variante
+                    true -> Tarifvariante.zuschlag_anwenden(variante, {zuschlag.id})
+                  end
+                end)
   end
 end

@@ -4,7 +4,6 @@ defmodule TarifvarianteTest do
 
   use ExUnit.Case
 
-  @tag :skip
   test "splitte mit leeren merkmalen" do
     tarifvariante = Tarifvariante.new(1, 10, [Merkmal.new_logisch(1, :erfuellt)])
 
@@ -13,7 +12,6 @@ defmodule TarifvarianteTest do
     assert result === [tarifvariante]
   end
 
-  @tag :skip
   test "splitte bei einem merkmal" do
     tarifvariante = Tarifvariante.new(1, 10, [Merkmal.new_logisch(1, :egal)])
 
@@ -25,7 +23,6 @@ defmodule TarifvarianteTest do
     ]
   end
 
-  #@tag :skip
   test "splitte bei mehreren merkmal" do
     tarifvariante =
       Tarifvariante.new(1, 10, [
@@ -39,46 +36,47 @@ defmodule TarifvarianteTest do
       Merkmal.new_bereich(3, 30, 50)
     ]
 
-    result = Tarifvariante.splitte(tarifvariante, split_merkmale) |> Enum.sort()
+    result = Tarifvariante.splitte(tarifvariante, split_merkmale)
+
+    expected = [
+      Tarifvariante.new(1, 10, [
+        Merkmal.new_logisch(1, :erfuellt),
+        Merkmal.new_logisch(2, :erfuellt),
+        Merkmal.new_bereich(3, 18, 29),
+      ]),
+
+      Tarifvariante.new(1, 10, [
+        Merkmal.new_logisch(1, :nicht_erfuellt),
+        Merkmal.new_logisch(2, :erfuellt),
+        Merkmal.new_bereich(3, 18, 29),
+      ]),
+
+      Tarifvariante.new(1, 10, [
+        Merkmal.new_logisch(1, :erfuellt),
+        Merkmal.new_logisch(2, :erfuellt),
+        Merkmal.new_bereich(3, 30, 50),
+      ]),
+
+      Tarifvariante.new(1, 10, [
+        Merkmal.new_logisch(1, :nicht_erfuellt),
+        Merkmal.new_logisch(2, :erfuellt),
+        Merkmal.new_bereich(3, 30, 50),
+      ]),
+
+      Tarifvariante.new(1, 10, [
+        Merkmal.new_logisch(1, :erfuellt),
+        Merkmal.new_logisch(2, :erfuellt),
+        Merkmal.new_bereich(3, 51, 150),
+      ]),
+
+      Tarifvariante.new(1, 10, [
+        Merkmal.new_logisch(1, :nicht_erfuellt),
+        Merkmal.new_logisch(2, :erfuellt),
+        Merkmal.new_bereich(3, 51, 150),
+      ]),
+    ]
 
     assert Enum.count(result) === 6
-
-#    assert result === [
-#      Tarifvariante.new(1, 10, [
-#        Merkmal.new_logisch(1, :erfuellt),
-#        Merkmal.new_logisch(2, :erfuellt),
-#        Merkmal.new_bereich(3, 18, 29),
-#      ]),
-#
-#      Tarifvariante.new(1, 10, [
-#        Merkmal.new_logisch(1, :nicht_erfuellt),
-#        Merkmal.new_logisch(2, :erfuellt),
-#        Merkmal.new_bereich(3, 18, 29),
-#      ]),
-#
-#      Tarifvariante.new(1, 10, [
-#        Merkmal.new_logisch(1, :erfuellt),
-#        Merkmal.new_logisch(2, :erfuellt),
-#        Merkmal.new_bereich(3, 30, 50),
-#      ]),
-#
-#      Tarifvariante.new(1, 10, [
-#        Merkmal.new_logisch(1, :nicht_erfuellt),
-#        Merkmal.new_logisch(2, :erfuellt),
-#        Merkmal.new_bereich(3, 30, 50),
-#      ]),
-#
-#      Tarifvariante.new(1, 10, [
-#        Merkmal.new_logisch(1, :erfuellt),
-#        Merkmal.new_logisch(2, :erfuellt),
-#        Merkmal.new_bereich(3, 51, 150),
-#      ]),
-#
-#      Tarifvariante.new(1, 10, [
-#        Merkmal.new_logisch(1, :nicht_erfuellt),
-#        Merkmal.new_logisch(2, :erfuellt),
-#        Merkmal.new_bereich(3, 51, 150),
-#      ]),
-#    ] |> Enum.sort()
+    assert Enum.filter(result, fn x -> Enum.member?(expected, fn y -> x === y end) end) === []
   end
 end

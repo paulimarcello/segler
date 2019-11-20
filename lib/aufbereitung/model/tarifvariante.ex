@@ -12,23 +12,13 @@ defmodule Aufbereitung.Model.Tarifvariante do
     %Tarifvariante{baustein_id: baustein_id, leistungsumfang: leistungsumfang}
   end
 
-  def splitte(tarifvarianten, split_merkmale) when is_list(split_merkmale) and is_list(tarifvarianten) do
-    tarifvarianten
-    |> splitte(split_merkmale)
-    |> List.flatten()
-    #split_merkmale
-    #|> Enum.reduce([tarifvariante], &Tarifvariante.splitte(&2, &1))
-  end
-
-  def splitte(tarifvariante = %Tarifvariante{}, split_merkmale) when is_list(split_merkmale) do
+  # --------------------------------------------------------------------------------------------------
+  # Anwendung Split
+  # --------------------------------------------------------------------------------------------------
+  def splitte(tarifvariante = %Tarifvariante{}, split_merkmale) when is_list(split_merkmale), do:
     split_merkmale
-    |> Enum.map(&splitte(tarifvariante, &1))
-  end
-
-  def splitte(tarifvarianten, split_merkmal = %Merkmal{}) when is_list(tarifvarianten) do
-    tarifvarianten
-    |> Enum.map(&splitte(&1, split_merkmal))
-  end
+    |> Enum.reduce([tarifvariante], fn merkmal, acc -> splitte(acc, merkmal, []) end)
+    |> List.flatten()
 
   def splitte(tarifvariante = %Tarifvariante{}, split_merkmal = %Merkmal{}) do
     {[merkmal], _} =
@@ -42,7 +32,18 @@ defmodule Aufbereitung.Model.Tarifvariante do
     |> Enum.map(&%Tarifvariante{tarifvariante | leistungsumfang: [&1 | neuer_leistungsumfang]})
   end
 
-  # --------------------- ??? -------------------------
+  defp splitte([], _, acc), do:
+    acc
+
+  defp splitte([variante|tail], split_merkmal, acc), do:
+    splitte(tail, split_merkmal, acc ++ splitte(variante, split_merkmal))
+
+  # --------------------------------------------------------------------------------------------------
+  # Leistungsumfang
+  # --------------------------------------------------------------------------------------------------
+
+  def get_leistungsumfang(tarifvariante), do:
+    tarifvariante.leistungsumfang
 
   def erweitere_leistungsumfang(tarifvariante, leistungsumfang) do
     neuer_leistungsumfang =
@@ -52,7 +53,6 @@ defmodule Aufbereitung.Model.Tarifvariante do
     %Tarifvariante{tarifvariante | leistungsumfang: neuer_leistungsumfang}
   end
 
-  def fuege_tarifbereiche_hinzu(tarifvariante, tarifbereiche) do
+  def fuege_tarifbereiche_hinzu(tarifvariante, tarifbereiche), do:
     %Tarifvariante{tarifvariante | tarifbereiche: Enum.uniq(tarifvariante.tarifbereiche ++ tarifbereiche)}
-  end
 end

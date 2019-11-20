@@ -45,7 +45,8 @@ defmodule MerkmalTest do
                    end do
     [
       {:erfuellt, :erfuellt, nil},
-      {:nicht_erfuellt, :nicht_erfuellt, nil}
+      {:nicht_erfuellt, :nicht_erfuellt, nil},
+      {:egal, :egal, nil},
     ]
   end
 
@@ -89,8 +90,7 @@ defmodule MerkmalTest do
       {:egal, :erfuellt, nil},
       {:egal, :nicht_erfuellt, nil},
       {:erfuellt, :egal, nil},
-      {:nicht_erfuellt, :egal, nil},
-      {:egal, :egal, nil}
+      {:nicht_erfuellt, :egal, nil}
     ]
   end
 
@@ -113,6 +113,15 @@ defmodule MerkmalTest do
   # Split-Logik Bereich
   # --------------------------------------------------------------------------------------------------
   @split_merkmal_bereich Merkmal.new_bereich(1, 30, 50)
+
+  test "splitte bereich 0" do
+    left = Merkmal.new_bereich(1, 0, 20)
+    right =  Merkmal.new_bereich(1, 0, 20)
+
+    result = Merkmal.splitte(left, right)
+
+    assert result === [left] and result === [right]
+  end
 
   test "splitte bereich 1" do
     left = Merkmal.new_bereich(1, 0, 20)
@@ -286,6 +295,15 @@ defmodule MerkmalTest do
   # --------------------------------------------------------------------------------------------------
   # Split-Logik Auswahl und Selbstbeteiligung
   # --------------------------------------------------------------------------------------------------
+  test "splitte auswahl 0" do
+    left = Merkmal.new_auswahl(1, [1, 2, 3, 4, 5])
+    right = Merkmal.new_auswahl(1, [1, 2, 3, 4, 5])
+
+    result = Merkmal.splitte(left, right)
+
+    assert result === [left] and result === [right]
+  end
+
   test "splitte auswahl 1" do
     left = Merkmal.new_auswahl(1, [1, 2, 3, 4, 5])
     right = Merkmal.new_auswahl(1, [6])
@@ -323,6 +341,15 @@ defmodule MerkmalTest do
     result = Merkmal.splitte(left, right)
 
     assert result === [left]
+  end
+
+  test "splitte selbstbeteiligung 0" do
+    left = Merkmal.new_selbstbeteiligung(1, [1, 2, 3, 4, 5])
+    right = Merkmal.new_selbstbeteiligung(1, [1, 2, 3, 4, 5])
+
+    result = Merkmal.splitte(left, right)
+
+    assert result === [left] && result === [right]
   end
 
   test "splitte selbstbeteiligung 1" do

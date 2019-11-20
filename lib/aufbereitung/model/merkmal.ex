@@ -64,7 +64,7 @@ defmodule Aufbereitung.Model.Merkmal do
   # Split-Logik Logisch
   # --------------------------------------------------------------------------------------------------
   @spec splitte(Aufbereitung.Model.Merkmal.t(), Aufbereitung.Model.Merkmal.t()) :: [Aufbereitung.Model.Merkmal.t()]
-  def splitte(left = %Merkmal{data: erf}, left = %Merkmal{data: erf}) when erf !== :egal do
+  def splitte(left = %Merkmal{data: erf}, left = %Merkmal{data: erf}) do
     [left]
   end
 
