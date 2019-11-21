@@ -4,7 +4,7 @@ defmodule TarifTest do
   alias Aufbereitung.Model.Tarif, as: Tarif
   alias Aufbereitung.Model.Merkmal, as: Merkmal
   alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
-  alias Aufbereitung.Model.TarifvariantenbausteinId, as: TarifvariantenbausteinId
+  alias Aufbereitung.Model.TarifvarianteBausteinId, as: TarifvarianteBausteinId
   alias Aufbereitung.Model.Zuschlag, as: Zuschlag
   alias Aufbereitung.Services.TarifAufbereitungService, as: TarifAufbereitungService
 
@@ -41,7 +41,7 @@ defmodule TarifTest do
 
     assert result === [
              %Tarifvariante{
-               baustein_id: %TarifvariantenbausteinId{
+               baustein_id: %TarifvarianteBausteinId{
                  tarif_id: @tarif_id,
                  grundpraemie_id: @grundpraemie_id_1
                },
@@ -74,14 +74,14 @@ defmodule TarifTest do
 
     assert result === [
              %Tarifvariante{
-               baustein_id: %TarifvariantenbausteinId{
+               baustein_id: %TarifvarianteBausteinId{
                  tarif_id: @tarif_id,
                  grundpraemie_id: @grundpraemie_id_1
                },
                leistungsumfang: [%Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 20, max: 50}}]
              },
              %Tarifvariante{
-               baustein_id: %TarifvariantenbausteinId{
+               baustein_id: %TarifvarianteBausteinId{
                  tarif_id: @tarif_id,
                  grundpraemie_id: @grundpraemie_id_2
                },
@@ -124,7 +124,7 @@ defmodule TarifTest do
 
     assert result === [
              %Tarifvariante{
-               baustein_id: %TarifvariantenbausteinId{
+               baustein_id: %TarifvarianteBausteinId{
                  tarif_id: @tarif_id,
                  grundpraemie_id: @grundpraemie_id_1
                },
@@ -134,7 +134,7 @@ defmodule TarifTest do
                ]
              },
              %Tarifvariante{
-               baustein_id: %TarifvariantenbausteinId{
+               baustein_id: %TarifvarianteBausteinId{
                  tarif_id: @tarif_id,
                  grundpraemie_id: @grundpraemie_id_1
                },

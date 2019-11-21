@@ -390,4 +390,148 @@ defmodule MerkmalTest do
 
     assert result === [left]
   end
+
+  # --------------------------------------------------------------------------------------------------
+  # wird_erfuellt_durch? logisch
+  # --------------------------------------------------------------------------------------------------
+  test "beide :erfuellt und ungleiche Id führt zu false" do
+    m1 = Merkmal.new_logisch(1, :erfuellt)
+    m2 = Merkmal.new_logisch(2, :erfuellt)
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === false
+  end
+
+  test "beide :erfuellt und gleiche Id führt zu true" do
+    m1 = Merkmal.new_logisch(1, :erfuellt)
+    m2 = Merkmal.new_logisch(1, :erfuellt)
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === true
+  end
+
+  test "beide :nicht_erfuellt und gleiche Id führt zu true" do
+    m1 = Merkmal.new_logisch(1, :nicht_erfuellt)
+    m2 = Merkmal.new_logisch(1, :nicht_erfuellt)
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === true
+  end
+
+  test "ungleiche erfuellung und gleiche Id führt zu false" do
+    m1 = Merkmal.new_logisch(1, :erfuellt)
+    m2 = Merkmal.new_logisch(1, :nicht_erfuellt)
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === false
+  end
+
+  # --------------------------------------------------------------------------------------------------
+  # wird_erfuellt_durch? bereich
+  # --------------------------------------------------------------------------------------------------
+  test "gleicher bereich und ungleiche Id führt zu false" do
+    m1 = Merkmal.new_bereich(1, 18, 55)
+    m2 = Merkmal.new_bereich(2, 18, 55)
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === false
+  end
+
+  test "gleicher bereich und gleiche Id führt zu true" do
+    m1 = Merkmal.new_bereich(1, 18, 55)
+    m2 = Merkmal.new_bereich(1, 18, 55)
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === true
+  end
+
+  test "ungleicher bereich und gleiche Id führt zu false" do
+    m1 = Merkmal.new_bereich(1, 18, 55)
+    m2 = Merkmal.new_bereich(1, 56, 150)
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === false
+  end
+
+  # --------------------------------------------------------------------------------------------------
+  # wird_erfuellt_durch? auswahl/selbstbeteiligung
+  # --------------------------------------------------------------------------------------------------
+  test "gleiche auswahl und ungleiche Id führt zu false" do
+    m1 = Merkmal.new_auswahl(1, [10, 20, 30])
+    m2 = Merkmal.new_auswahl(2, [10, 20, 30])
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === false
+  end
+
+  test "ungleiche auswahl und gleiche Id führt zu false" do
+    m1 = Merkmal.new_auswahl(1, [10, 20, 30])
+    m2 = Merkmal.new_auswahl(1, [40, 50, 60])
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === false
+  end
+
+  test "gleiche auswahl und gleiche Id führt zu true" do
+    m1 = Merkmal.new_auswahl(1, [10, 20, 30])
+    m2 = Merkmal.new_auswahl(1, [10, 20, 30])
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === true
+  end
+
+  test "gleiche auswahl in anderer reihenfolge und gleiche Id führt zu true" do
+    m1 = Merkmal.new_auswahl(1, [10, 20, 30])
+    m2 = Merkmal.new_auswahl(1, [20, 10, 30])
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === true
+  end
+
+  test "gleiche selbstbeteiligung und ungleiche Id führt zu false" do
+    m1 = Merkmal.new_selbstbeteiligung(1, [10, 20, 30])
+    m2 = Merkmal.new_selbstbeteiligung(2, [10, 20, 30])
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === false
+  end
+
+  test "ungleiche selbstbeteiligung und gleiche Id führt zu false" do
+    m1 = Merkmal.new_selbstbeteiligung(1, [10, 20, 30])
+    m2 = Merkmal.new_selbstbeteiligung(1, [40, 50, 60])
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === false
+  end
+
+  test "gleiche selbstbeteiligung und gleiche Id führt zu true" do
+    m1 = Merkmal.new_selbstbeteiligung(1, [10, 20, 30])
+    m2 = Merkmal.new_selbstbeteiligung(1, [10, 20, 30])
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === true
+  end
+
+  test "gleiche selbstbeteiligung in anderer reihenfolge und gleiche Id führt zu true" do
+    m1 = Merkmal.new_selbstbeteiligung(1, [10, 20, 30])
+    m2 = Merkmal.new_selbstbeteiligung(1, [20, 10, 30])
+
+    result = Merkmal.erfuellt_durch?(m1, m2)
+
+    assert result === true
+  end
 end

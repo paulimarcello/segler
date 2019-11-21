@@ -141,4 +141,20 @@ defmodule Aufbereitung.Model.Merkmal do
         ]
     end
   end
+
+  # --------------------------------------------------------------------------------------------------
+  # wird_erfuellt_durch? logisch
+  # --------------------------------------------------------------------------------------------------
+  @doc """
+  erfuellt_durch? prueft auf gleiche Id und _identischer_ Ausprägung.
+  Das ist ausreichend, da bereits vorher im Aufbereitungsprozess auf genau diese
+  Merkmalsausprägungen gesplittet wurde. Es kann also nur identische Ausprägungen oder
+  Differenzen handeln.
+  """
+  @spec erfuellt_durch?(Aufbereitung.Model.Merkmal.t(), Aufbereitung.Model.Merkmal.t()) :: boolean
+  def erfuellt_durch?(%Merkmal{id: left_id}, %Merkmal{id: right_id}) when left_id !== right_id, do:
+    false
+
+  def erfuellt_durch?(%Merkmal{id: id, data: left}, %Merkmal{id: id, data: right}), do:
+    left === right
 end

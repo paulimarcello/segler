@@ -1,5 +1,6 @@
 defmodule Aufbereitung.Model.Bedingung do
   alias Aufbereitung.Model.Bedingung, as: Bedingung
+  alias Aufbereitung.Model.Merkmal, as: Merkmal
 
   defmodule Und do
     defstruct bedingungen: nil
@@ -21,28 +22,64 @@ defmodule Aufbereitung.Model.Bedingung do
 
   defstruct merkmal: nil
 
-  def new(merkmal), do: %Bedingung{merkmal: merkmal}
+  # --------------------------------------------------------------------------------------------------
+  # new
+  # --------------------------------------------------------------------------------------------------
+  def new(merkmal), do:
+    %Bedingung{merkmal: merkmal}
 
-  def verknuepfe_und(bedingungen),
-    do:
-      bedingungen
-      |> Bedingung.Und.new()
+  # --------------------------------------------------------------------------------------------------
+  # verknuepfe
+  # --------------------------------------------------------------------------------------------------
+  def verknuepfe_und(bedingungen), do:
+    bedingungen
+    |> Bedingung.Und.new()
 
-  def verknuepfe_oder(bedingungen),
-    do:
-      bedingungen
-      |> Bedingung.Oder.new()
+  def verknuepfe_oder(bedingungen), do:
+    bedingungen
+    |> Bedingung.Oder.new()
 
-  def get_merkmale(bedingung),
-    do:
-      bedingung
-      |> extract_merkmale()
-      |> List.flatten()
+  # --------------------------------------------------------------------------------------------------
+  # erfuellt_durchget_merkmale
+  # --------------------------------------------------------------------------------------------------
+  def get_merkmale(bedingung), do:
+    bedingung
+    |> extract_merkmale()
+    |> List.flatten()
 
-  defp extract_merkmale(%{merkmal: merkmal}), do: merkmal
+  defp extract_merkmale(%{merkmal: merkmal}), do:
+    merkmal
 
-  defp extract_merkmale(bedingung),
-    do:
-      bedingung.bedingungen
-      |> Enum.map(&extract_merkmale/1)
+  defp extract_merkmale(bedingung), do:
+    bedingung.bedingungen
+    |> Enum.map(&extract_merkmale/1)
+
+  # --------------------------------------------------------------------------------------------------
+  # erfuellt_durch?
+  # --------------------------------------------------------------------------------------------------
+  def erfuellt_durch?(_, []), do:
+    false
+
+  def erfuellt_durch?(%Bedingung{merkmal: merkmal}, merkmale) do
+    single_or_empty =
+      merkmale
+      |> Enum.split_with(&Merkmal.bezieht_sich_auf?&1, (merkmal))
+
+    case single_or_empty do
+      {[], _} -> false
+      {[m], _} -> Merkmal.erfuellt_durch?(merkmal, m)
+    end
+  end
+
+  def erfuellt_durch?(bedingung = %Bedingung.Und{}, merkmale), do:
+    bedingung.bedingungen
+    |> Enum.all?(fn einzelbedingung ->
+                  erfuellt_durch?(einzelbedingung, merkmale)
+                 end)
+
+  def erfuellt_durch?(bedingung = %Bedingung.Oder{}, merkmale), do:
+    bedingung.bedingungen
+    |> Enum.any?(fn einzelbedingung ->
+                  erfuellt_durch?(einzelbedingung, merkmale)
+                 end)
 end

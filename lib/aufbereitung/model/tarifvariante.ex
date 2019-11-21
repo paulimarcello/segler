@@ -1,16 +1,20 @@
 defmodule Aufbereitung.Model.Tarifvariante do
   alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
-  alias Aufbereitung.Model.TarifvariantenbausteinId, as: TarifvariantenbausteinId
+  alias Aufbereitung.Model.TarifvarianteBausteinId, as: TarifvarianteBausteinId
   alias Aufbereitung.Model.Merkmal, as: Merkmal
+  alias Aufbereitung.Model.Praemie, as: Praemie
 
   defstruct baustein_id: nil,
             leistungsumfang: [],
-            tarifbereiche: []
+            tarifbereiche: [],
+            praemie: nil
 
-  def new(grundtarif_id, grundpraemie_id, leistungsumfang) do
-    baustein_id = TarifvariantenbausteinId.new(grundtarif_id, grundpraemie_id)
-    %Tarifvariante{baustein_id: baustein_id, leistungsumfang: leistungsumfang}
-  end
+  def new(grundtarif_id, %{id: id, formel: formel}, leistungsumfang, versicherungssteuer), do:
+    %Tarifvariante{
+      baustein_id: TarifvarianteBausteinId.new(grundtarif_id, id),
+      leistungsumfang: leistungsumfang,
+      praemie: Praemie.new(versicherungssteuer, formel)
+    }
 
   # --------------------------------------------------------------------------------------------------
   # Anwendung Split
@@ -37,12 +41,14 @@ defmodule Aufbereitung.Model.Tarifvariante do
     splitte(tail, split_merkmal, acc ++ splitte(variante, split_merkmal))
 
   # --------------------------------------------------------------------------------------------------
-  # Leistungsumfang
+  # Daten herausgeben
   # --------------------------------------------------------------------------------------------------
-
   def get_leistungsumfang(tarifvariante), do:
     tarifvariante.leistungsumfang
 
+  # --------------------------------------------------------------------------------------------------
+  # Daten hinzufügen
+  # --------------------------------------------------------------------------------------------------
   def erweitere_leistungsumfang(tarifvariante, leistungsumfang) do
     neuer_leistungsumfang =
       leistungsumfang
@@ -53,4 +59,12 @@ defmodule Aufbereitung.Model.Tarifvariante do
 
   def fuege_tarifbereiche_hinzu(tarifvariante, tarifbereiche), do:
     %Tarifvariante{tarifvariante | tarifbereiche: Enum.uniq(tarifvariante.tarifbereiche ++ tarifbereiche)}
+
+  def tarif_zuschlag_anwenden(tarifvariante, %{id: zuschlag_id, formel: formel}) do
+    %Tarifvariante{
+      tarifvariante |
+        baustein_id: TarifvarianteBausteinId.zuschlag_id_hinzufuegen(tarifvariante.baustein_id, zuschlag_id),
+        praemie: Praemie.formel_hinzufuegen(tarifvariante.praemie, formel)
+      }
+  end
 end
