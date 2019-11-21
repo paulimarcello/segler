@@ -1,6 +1,7 @@
 defmodule TarifTest do
   alias Aufbereitung.Model.Bedingung, as: Bedingung
   alias Aufbereitung.Model.Grundpraemie, as: Grundpraemie
+  alias Aufbereitung.Model.Praemie, as: Praemie
   alias Aufbereitung.Model.Tarif, as: Tarif
   alias Aufbereitung.Model.Merkmal, as: Merkmal
   alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
@@ -18,131 +19,89 @@ defmodule TarifTest do
   # Merkmale
   @eintrittsalter 1
   @objekt_mitbewohnt 2
+  @versicherungssteuer 1.19
 
   # --------------------------------------------------------------------------------------------------
   # Nur Grundpraemien
   # --------------------------------------------------------------------------------------------------
-  @tag :skip
+
   test "nur Grundpraemien 1" do
     result =
-      %Tarif{
-        id: @tarif_id,
-        leistungsumfang: [Merkmal.new_bereich(@eintrittsalter, 18, 60)],
-        grundpraemien: [
-          Grundpraemie.new(
-            @grundpraemie_id_1,
-            "10*0,9",
-            Merkmal.new_bereich(@eintrittsalter, 20, 50) |> Bedingung.new()
-          )
+      Tarif.new(
+        @tarif_id,
+        [
+          Grundpraemie.new(@grundpraemie_id_1, "10*0,9", Merkmal.new_bereich(@eintrittsalter, 20, 50) |> Bedingung.new())
         ],
-        zuschlaege: []
-      }
-      |> TarifAufbereitungService.alle_tarifvarianten_des_tarifs()
+        [],
+        [Merkmal.new_bereich(@eintrittsalter, 18, 60)],
+        @versicherungssteuer
+      )
+      |> Tarif.bilde_alle_tarifvarianten()
 
     assert result === [
              %Tarifvariante{
-               baustein_id: %TarifvarianteBausteinId{
-                 tarif_id: @tarif_id,
-                 grundpraemie_id: @grundpraemie_id_1
-               },
-               leistungsumfang: [%Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 20, max: 50}}]
+                baustein_id:
+                  %TarifvarianteBausteinId{
+                    tarif_id: @tarif_id,
+                    grundpraemie_id: @grundpraemie_id_1
+                  },
+                leistungsumfang: [
+                  %Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 20, max: 50}}
+                ],
+                praemie:
+                  %Praemie{
+                    versicherungssteuer: @versicherungssteuer,
+                    formeln: ["10*0,9"]
+                  }
              }
            ]
   end
 
-  @tag :skip
   test "nur Grundpraemien 2" do
     result =
-      %Tarif{
-        id: @tarif_id,
-        leistungsumfang: [Merkmal.new_bereich(@eintrittsalter, 18, 60)],
-        grundpraemien: [
-          Grundpraemie.new(
-            @grundpraemie_id_1,
-            "10*0,9",
-            Merkmal.new_bereich(@eintrittsalter, 20, 50) |> Bedingung.new()
-          ),
-          Grundpraemie.new(
-            @grundpraemie_id_2,
-            "10*1,1",
-            Merkmal.new_bereich(@eintrittsalter, 51, 60) |> Bedingung.new()
-          )
+      Tarif.new(
+        @tarif_id,
+        [
+          Grundpraemie.new(@grundpraemie_id_1, "10*0,9", Merkmal.new_bereich(@eintrittsalter, 20, 50) |> Bedingung.new()),
+          Grundpraemie.new(@grundpraemie_id_2, "10*1,1", Merkmal.new_bereich(@eintrittsalter, 51, 60) |> Bedingung.new())
         ],
-        zuschlaege: []
-      }
-      |> TarifAufbereitungService.alle_tarifvarianten_des_tarifs()
+        [],
+        [Merkmal.new_bereich(@eintrittsalter, 18, 60)],
+        @versicherungssteuer
+      )
+      |> Tarif.bilde_alle_tarifvarianten()
 
     assert result === [
              %Tarifvariante{
-               baustein_id: %TarifvarianteBausteinId{
-                 tarif_id: @tarif_id,
-                 grundpraemie_id: @grundpraemie_id_1
-               },
-               leistungsumfang: [%Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 20, max: 50}}]
+                baustein_id:
+                  %TarifvarianteBausteinId{
+                    tarif_id: @tarif_id,
+                    grundpraemie_id: @grundpraemie_id_1
+                  },
+                leistungsumfang: [
+                  %Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 20, max: 50}}
+                ],
+                praemie:
+                  %Praemie{
+                    versicherungssteuer: @versicherungssteuer,
+                    formeln: ["10*0,9"]
+                  }
              },
              %Tarifvariante{
-               baustein_id: %TarifvarianteBausteinId{
-                 tarif_id: @tarif_id,
-                 grundpraemie_id: @grundpraemie_id_2
-               },
-               leistungsumfang: [%Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 51, max: 60}}]
-             }
-           ]
-  end
-
-  # --------------------------------------------------------------------------------------------------
-  # Split Grundprämie und Zuschlag anhand logischem Merkmal
-  # --------------------------------------------------------------------------------------------------
-  @tag :skip
-  test "Split logisches Merkmal: Grundtarif Egal, Zuschlag Erfuellt -> Split" do
-    result =
-      %Tarif{
-        id: @tarif_id,
-        leistungsumfang: [
-          Merkmal.new_bereich(@eintrittsalter, 18, 60),
-          Merkmal.new_logisch(@objekt_mitbewohnt, :egal)
-        ],
-        grundpraemien: [
-          Grundpraemie.new(
-            @grundpraemie_id_1,
-            "100",
-            []
-          )
-        ],
-        zuschlaege: [
-          Zuschlag.new(
-            @zuschlag_id_1,
-            :tarif,
-            "praemie*1,2",
-            @reihenfolge_1,
-            Merkmal.new_logisch(@objekt_mitbewohnt, :erfuellt) |> Bedingung.new()
-          )
-        ]
-      }
-      |> TarifAufbereitungService.alle_tarifvarianten_des_tarifs()
-      |> IO.inspect()
-
-    assert result === [
-             %Tarifvariante{
-               baustein_id: %TarifvarianteBausteinId{
-                 tarif_id: @tarif_id,
-                 grundpraemie_id: @grundpraemie_id_1
-               },
-               leistungsumfang: [
-                 %Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 18, max: 60}},
-                 %Merkmal{id: @objekt_mitbewohnt, typ: :logisch, data: :erfuellt}
-               ]
-             },
-             %Tarifvariante{
-               baustein_id: %TarifvarianteBausteinId{
-                 tarif_id: @tarif_id,
-                 grundpraemie_id: @grundpraemie_id_1
-               },
-               leistungsumfang: [
-                 %Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 18, max: 60}},
-                 %Merkmal{id: @objekt_mitbewohnt, typ: :logisch, data: :nicht_erfuellt}
-               ]
-             }
+              baustein_id:
+                %TarifvarianteBausteinId{
+                  tarif_id: @tarif_id,
+                  grundpraemie_id: @grundpraemie_id_2
+                },
+              leistungsumfang: [
+                %Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 51, max: 60}}
+              ],
+              praemie:
+                %Praemie{
+                  versicherungssteuer: @versicherungssteuer,
+                  formeln: ["10*1,1"]
+                }
+           }
            ]
   end
 end

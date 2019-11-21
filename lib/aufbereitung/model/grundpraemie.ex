@@ -1,12 +1,16 @@
 defmodule Aufbereitung.Model.Grundpraemie do
+  alias Aufbereitung.Model.Bedingung, as: Bedingung
   alias Aufbereitung.Model.Grundpraemie, as: Grundpraemie
 
   defstruct id: nil,
             formel: nil,
-            bedingung: nil
+            bedingungen: nil
 
-  def new(id, formel, bedingung \\ nil) do
-    %Grundpraemie{id: id, formel: formel, bedingung: bedingung}
+  def new(id, formel, bedingungen \\ []) do
+    %Grundpraemie{id: id, formel: formel, bedingungen: bedingungen}
   end
 
+  def get_leistungsumfang_aus_bedingung(grundpraemie) do
+    Bedingung.get_merkmale(grundpraemie.bedingungen)
+  end
 end

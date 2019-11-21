@@ -48,7 +48,7 @@ defmodule Aufbereitung.Model.Bedingung do
     |> List.flatten()
 
   defp extract_merkmale(%{merkmal: merkmal}), do:
-    merkmal
+    [merkmal]
 
   defp extract_merkmale(bedingung), do:
     bedingung.bedingungen
