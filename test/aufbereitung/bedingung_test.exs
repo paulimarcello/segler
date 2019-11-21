@@ -108,6 +108,12 @@ defmodule BedigungTest do
   # --------------------------------------------------------------------------------------------------
   # erfuellt_durch
   # --------------------------------------------------------------------------------------------------
+  test "keine bedingung dann immer wahr" do
+    result = Bedingung.erfuellt_durch?(nil, [])
+
+    assert result === true
+  end
+
   test "einzelbedingung wird durch leeren Leistungsumfang nicht erfuellt" do
     bedingung_1 = Bedingung.new(@merkmal_logisch_1)
 

@@ -42,6 +42,9 @@ defmodule Aufbereitung.Model.Bedingung do
   # --------------------------------------------------------------------------------------------------
   # erfuellt_durchget_merkmale
   # --------------------------------------------------------------------------------------------------
+  def get_merkmale(nil), do:
+    []
+
   def get_merkmale(bedingung), do:
     bedingung
     |> extract_merkmale()
@@ -57,6 +60,9 @@ defmodule Aufbereitung.Model.Bedingung do
   # --------------------------------------------------------------------------------------------------
   # erfuellt_durch?
   # --------------------------------------------------------------------------------------------------
+  def erfuellt_durch?(nil, _), do:
+    true
+
   def erfuellt_durch?(_, []), do:
     false
 

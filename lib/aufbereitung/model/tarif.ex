@@ -47,9 +47,9 @@ defmodule Aufbereitung.Model.Tarif do
 
   # --------------------------------------------------------------------------------------------------
 
-  defp wende_tarifzuschlaege_an(tarifvarianten, []) do
+  defp wende_tarifzuschlaege_an(tarifvarianten, []), do:
     tarifvarianten
-  end
+    |> List.flatten()
 
   defp wende_tarifzuschlaege_an(tarifvarianten, [zuschlag|zuschlaege_rest]) do
     varianten =

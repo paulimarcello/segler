@@ -104,4 +104,75 @@ defmodule TarifTest do
            }
            ]
   end
+
+  # --------------------------------------------------------------------------------------------------
+  # Feature: Split Grundprämie und Zuschlag anhand logischem Merkmal
+  # --------------------------------------------------------------------------------------------------
+  test "Split logisches Merkmal Szenario 1" do
+    result =
+      Tarif.new(
+        @tarif_id,
+        [
+          Grundpraemie.new(@grundpraemie_id_1, "100")
+        ],
+        [
+          Zuschlag.new(
+            @zuschlag_id_1,
+            :tarif,
+            "praemie*1,2",
+            1,
+            Merkmal.new_logisch(@objekt_mitbewohnt, :erfuellt) |> Bedingung.new()
+          )
+        ],
+        [
+          Merkmal.new_bereich(@eintrittsalter, 18, 60),
+          Merkmal.new_logisch(@objekt_mitbewohnt, :egal)
+        ],
+        @versicherungssteuer
+      )
+      |> Tarif.bilde_alle_tarifvarianten()
+
+      expected = [
+        %Tarifvariante{
+           baustein_id:
+             %TarifvarianteBausteinId{
+               tarif_id: @tarif_id,
+               grundpraemie_id: @grundpraemie_id_1,
+               zuschlaege_ids: [@zuschlag_id_1]
+             },
+           leistungsumfang: [
+             %Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 18, max: 60}},
+             %Merkmal{id: @objekt_mitbewohnt, typ: :logisch, data: :erfuellt}
+           ],
+           praemie:
+             %Praemie{
+               versicherungssteuer: @versicherungssteuer,
+               formeln: ["praemie*1,2", "100"]
+             }
+        },
+        %Tarifvariante{
+          baustein_id:
+            %TarifvarianteBausteinId{
+              tarif_id: @tarif_id,
+              grundpraemie_id: @grundpraemie_id_1,
+              zuschlaege_ids: []
+            },
+          leistungsumfang: [
+            %Merkmal{id: @eintrittsalter, typ: :bereich, data: %{min: 18, max: 60}},
+            %Merkmal{id: @objekt_mitbewohnt, typ: :logisch, data: :nicht_erfuellt}
+          ],
+          praemie:
+            %Praemie{
+              versicherungssteuer: @versicherungssteuer,
+              formeln: ["100"]
+            }
+       },
+      ]
+
+      assert_equivalence(result, expected)
+  end
+
+  defp assert_equivalence(result, expected) when is_list(result) and is_list(expected) do
+    assert Enum.filter(result, fn x -> Enum.member?(expected, fn y -> x === y end) end) === []
+  end
 end

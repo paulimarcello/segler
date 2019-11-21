@@ -6,7 +6,7 @@ defmodule Aufbereitung.Model.Grundpraemie do
             formel: nil,
             bedingungen: nil
 
-  def new(id, formel, bedingungen \\ []) do
+  def new(id, formel, bedingungen \\ nil) do
     %Grundpraemie{id: id, formel: formel, bedingungen: bedingungen}
   end
 
