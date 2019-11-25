@@ -9,6 +9,7 @@ defmodule Aufbereitung.Model.Zuschlag do
             reihenfolge: nil,
             bedingungen: []
 
+  @spec new(integer, :tarif | :tarifwerk, String.t(), integer, [Aufbereitung.Model.Bedingung.t()]) :: Aufbereitung.Model.Zuschlag.t()
   def new(id, typ, formel, reihenfolge, bedingungen) when is_number(id)
                                                     and (typ === :tarif or typ === :tarifwerk)
                                                     and is_binary(formel)
@@ -17,11 +18,16 @@ defmodule Aufbereitung.Model.Zuschlag do
     %Zuschlag{id: id, typ: typ, formel: formel, reihenfolge: reihenfolge, bedingungen: bedingungen}
   end
 
+  @doc """
+  Anhand der ggf. vorhandenen Zuschlagsbedingungen wird die Tarifvariante in mehere weitere Tarifvarianten gesplittet.
+  Die Tarifvarianten, die dann die Zuschlagsbedigungen erfüllen, erhalten den Zuschlag.
+  """
+  @spec anwenden(Aufbereitung.Model.Zuschlag.t(), Aufbereitung.Model.Tarifvariante.t()) :: [Aufbereitung.Model.Tarifvariante.t()]
   def anwenden(zuschlag, tarifvariante) do
     Tarifvariante.splitte(tarifvariante, Bedingung.get_merkmale(zuschlag.bedingungen))
     |> Enum.map(fn variante ->
-                  lu = Tarifvariante.get_leistungsumfang(tarifvariante)
-                  case Bedingung.erfuellt_durch?(zuschlag.bedingungen, lu) do
+                  merkmale = Tarifvariante.get_leistungsumfang(tarifvariante)
+                  case Bedingung.erfuellt_durch?(zuschlag.bedingungen, merkmale) do
                     false -> variante
                     true -> Tarifvariante.tarif_zuschlag_anwenden(variante, zuschlag)
                   end

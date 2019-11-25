@@ -5,9 +5,13 @@ defmodule Aufbereitung.Model.TarifvarianteBausteinId do
             grundpraemie_id: nil,
             zuschlaege_ids: []
 
-  def new(tarif_id, grundpraemie_id), do:
+  @spec new(integer, integer) :: Aufbereitung.Model.TarifvarianteBausteinId.t()
+  def new(tarif_id, grundpraemie_id) do
     %TarifvarianteBausteinId{tarif_id: tarif_id, grundpraemie_id: grundpraemie_id}
+  end
 
-  def zuschlag_id_hinzufuegen(baustein_id, zuschlag_id) when is_number(zuschlag_id), do:
+  @spec zuschlag_id_hinzufuegen(Aufbereitung.Model.TarifvarianteBausteinId.t(), integer) :: Aufbereitung.Model.TarifvarianteBausteinId.t()
+  def zuschlag_id_hinzufuegen(baustein_id, zuschlag_id) when is_number(zuschlag_id) do
     %TarifvarianteBausteinId{baustein_id | zuschlaege_ids: [zuschlag_id|baustein_id.zuschlaege_ids]}
+  end
 end
