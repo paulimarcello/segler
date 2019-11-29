@@ -29,7 +29,7 @@ defmodule Aufbereitung.Model.Zuschlag do
                   merkmale = Tarifvariante.get_leistungsumfang(tarifvariante)
                   case Bedingung.erfuellt_durch?(zuschlag.bedingungen, merkmale) do
                     false -> variante
-                    true -> Tarifvariante.tarif_zuschlag_anwenden(variante, zuschlag)
+                    true -> Tarifvariante.tarif_zuschlag_anwenden(variante, %{id: zuschlag.id, formel: zuschlag.formel})
                   end
                 end)
   end

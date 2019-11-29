@@ -9,7 +9,7 @@ defmodule Aufbereitung.Model.Tarifvariante do
             tarifbereiche: [],
             praemie: nil
 
-  @spec new(integer, %{formel: String.t(), id: integer}, [Aufbereitung.Model.Merkmal.t()], number) :: Aufbereitung.Model.Tarifvariante.t()
+  @spec new(number, %{id: number, formel: String.t()}, [Aufbereitung.Model.Merkmal.t()], number) :: Aufbereitung.Model.Tarifvariante.t()
   def new(grundtarif_id, %{id: id, formel: formel}, leistungsumfang, versicherungssteuer) do
     %Tarifvariante{
       baustein_id: TarifvarianteBausteinId.new(grundtarif_id, id),

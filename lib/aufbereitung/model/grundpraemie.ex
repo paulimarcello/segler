@@ -1,6 +1,7 @@
 defmodule Aufbereitung.Model.Grundpraemie do
   alias Aufbereitung.Model.Bedingung, as: Bedingung
   alias Aufbereitung.Model.Grundpraemie, as: Grundpraemie
+  alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
 
   defstruct id: nil,
             formel: nil,
@@ -11,8 +12,13 @@ defmodule Aufbereitung.Model.Grundpraemie do
     %Grundpraemie{id: id, formel: formel, bedingungen: bedingungen}
   end
 
-  @spec get_leistungsumfang_aus_bedingung(Aufbereitung.Model.Grundpraemie.t()) :: [Aufbereitung.Model.Merkmal.t()]
-  def get_leistungsumfang_aus_bedingung(grundpraemie) do
-    Bedingung.get_merkmale(grundpraemie.bedingungen)
+  @spec erzeuge_grundtarifvariante(Aufbereitung.Model.Grundpraemie.t(), integer, number) :: Aufbereitung.Model.Tarifvariante.t()
+  def erzeuge_grundtarifvariante(grundpraemie, tarif_id, versicherungssteuer) do
+    Tarifvariante.new(
+      tarif_id,
+      %{id: grundpraemie.id, formel: grundpraemie.formel},
+      Bedingung.get_merkmale(grundpraemie.bedingungen),
+      versicherungssteuer
+    )
   end
 end

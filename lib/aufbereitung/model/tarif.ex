@@ -37,12 +37,8 @@ defmodule Aufbereitung.Model.Tarif do
   end
 
   defp bilde_grundtarifvarianten(grundpraemie, tarif_id, versicherungssteuer) do
-    Tarifvariante.new(
-      tarif_id,
-      grundpraemie,
-      Grundpraemie.get_leistungsumfang_aus_bedingung(grundpraemie),
-      versicherungssteuer
-    )
+    grundpraemie
+    |> Grundpraemie.erzeuge_grundtarifvariante(tarif_id, versicherungssteuer)
   end
 
   defp erweitere_um_leistungsumfang(tarifvarianten, leistungsumfang) do
