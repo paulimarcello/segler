@@ -23,12 +23,14 @@ defmodule Aufbereitung.Model.Zuschlag do
   @spec anwenden(Aufbereitung.Model.Zuschlag.t(), Aufbereitung.Model.Tarifvariante.t()) :: [Aufbereitung.Model.Tarifvariante.t()]
   def anwenden(zuschlag, tarifvariante) do
     Tarifvariante.splitte(tarifvariante, Bedingung.get_merkmale(zuschlag.bedingungen))
-    |> Enum.map(fn variante ->
-                  merkmale = Tarifvariante.get_leistungsumfang(tarifvariante)
-                  case Bedingung.erfuellt_durch?(zuschlag.bedingungen, merkmale) do
-                    false -> variante
-                    true -> Tarifvariante.tarif_zuschlag_anwenden(variante, %{id: zuschlag.id, formel: zuschlag.formel})
-                  end
-                end)
+    |> Enum.map(&wende_zuschlag_an_wenn_bedingung_erfuellt(zuschlag, tarifvariante, &1))
+  end
+
+  defp wende_zuschlag_an_wenn_bedingung_erfuellt(zuschlag, tarifvariante, neue_variante) do
+    merkmale = Tarifvariante.get_leistungsumfang(tarifvariante)
+    case Bedingung.erfuellt_durch?(zuschlag.bedingungen, merkmale) do
+      false -> neue_variante
+      true -> Tarifvariante.tarif_zuschlag_anwenden(neue_variante, %{id: zuschlag.id, formel: zuschlag.formel})
+    end
   end
 end
