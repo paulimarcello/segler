@@ -1,8 +1,5 @@
 defmodule Aufbereitung.Model.Tarifvariante do
-  alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
-  alias Aufbereitung.Model.TarifvarianteBausteinId, as: TarifvarianteBausteinId
-  alias Aufbereitung.Model.Merkmal, as: Merkmal
-  alias Aufbereitung.Model.Praemie, as: Praemie
+  alias Aufbereitung.Model.{Tarifvariante, TarifvarianteBausteinId, Merkmal, Praemie}
 
   defstruct baustein_id: nil,
             leistungsumfang: [],

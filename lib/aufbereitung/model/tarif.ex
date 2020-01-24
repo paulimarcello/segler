@@ -1,8 +1,5 @@
 defmodule Aufbereitung.Model.Tarif do
-  alias Aufbereitung.Model.Grundpraemie, as: Grundpraemie
-  alias Aufbereitung.Model.Tarif, as: Tarif
-  alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
-  alias Aufbereitung.Model.Zuschlag, as: Zuschlag
+  alias Aufbereitung.Model.{Grundpraemie, Tarif, Tarifvariante, Zuschlag}
 
   defstruct id: nil,
             grundpraemien: [],

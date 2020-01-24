@@ -1,6 +1,5 @@
 defmodule Aufbereitung.Model.Bedingung do
-  alias Aufbereitung.Model.Bedingung, as: Bedingung
-  alias Aufbereitung.Model.Merkmal, as: Merkmal
+  alias Aufbereitung.Model.{Bedingung, Merkmal}
 
   defmodule Und do
     defstruct bedingungen: nil

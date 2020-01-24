@@ -1,7 +1,5 @@
 defmodule Aufbereitung.Model.Zuschlag do
-  alias Aufbereitung.Model.Bedingung, as: Bedingung
-  alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
-  alias Aufbereitung.Model.Zuschlag, as: Zuschlag
+  alias Aufbereitung.Model.{Bedingung, Tarifvariante, Zuschlag}
 
   defstruct id: nil,
             typ: nil,

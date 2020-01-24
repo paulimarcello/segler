@@ -1,7 +1,5 @@
 defmodule Aufbereitung.Model.Grundpraemie do
-  alias Aufbereitung.Model.Bedingung, as: Bedingung
-  alias Aufbereitung.Model.Grundpraemie, as: Grundpraemie
-  alias Aufbereitung.Model.Tarifvariante, as: Tarifvariante
+  alias Aufbereitung.Model.{Bedingung, Grundpraemie, Tarifvariante}
 
   defstruct id: nil,
             formel: nil,
